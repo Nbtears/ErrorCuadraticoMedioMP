@@ -53,6 +53,10 @@ def image_process ():
                 
                
                 angle = angle_calculate(shoulder_L,elbow_L,wrist_L)
+                #look angle
+                cv.putText(image,str(angle),
+                           tuple(np.multiply(elbow_L,[640,480]).astype(int)),
+                                 cv.FONT_HERSHEY_SIMPLEX,0.5,(255,255,255),2,cv.LINE_AA)
                 
             except:
                 pass
@@ -67,22 +71,7 @@ def image_process ():
                  cv.destroyAllWindows()
                  break 
 
-def main():
-    i=0  
-    run = True
-    y_true = [30,45,60,75,90,105,120,135,150]
-    y_pred = []
-    
-    while run:
-        image_process()
-        print(y_true[i]+"\n")
-        if keyboard.is_pressed('m'):
-            list.append(y_pred,angle)
-            i+=1
-            break
-        if i == len(y_true):
-            run= False
-
+def Mistake_calculation(y_true,y_pred):
     mse = mean_squared_error(y_true, y_pred)
 
     print(mse)
@@ -90,6 +79,25 @@ def main():
 
     plt.plot(y_true,'r',)
     plt.plot(y_pred,'bo')
+    
+
+def main():
+    y_true = [30,45,60,75,90,105,120,135,150]
+    y_pred = []
+    i=0  
+    run = True
+    
+    while run:
+        image_process()
+        print(y_true[i])
+        if keyboard.is_pressed('m'):
+            list.append(y_pred,angle)
+            i+=1
+            break
+        if i == len(y_true):
+            run= False
+
+ 
    
 if __name__=="__main__":
     main()          

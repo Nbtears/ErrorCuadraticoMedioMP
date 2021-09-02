@@ -3,6 +3,8 @@ import mediapipe as mp
 import numpy as np
 from sklearn.metrics import mean_squared_error
 import matplotlib.pyplot as plt
+import keyboard
+
 
  
 def angle_calculate(a,b,c):
@@ -18,7 +20,8 @@ def angle_calculate(a,b,c):
     
     return angle   
 
-def te ():
+def image_process ():
+    global angle
     #setup mediapie
     mp_drawing = mp.solutions.drawing_utils
     mp_holistic = mp.solutions.holistic
@@ -50,16 +53,13 @@ def te ():
                 
                
                 angle = angle_calculate(shoulder_L,elbow_L,wrist_L)
-                    
-                    #look angle
-                cv.putText(image,str(angle),
-                tuple(np.multiply(elbow_L,[640,480]).astype(int)),
-                cv.FONT_HERSHEY_SIMPLEX,0.5,(255,255,255),2,cv.LINE_AA)
                 
             except:
                 pass
              #dibujar las articulaciones del cuerpo en la imagen
-            mp_drawing.draw_landmarks(image, result.pose_landmarks,mp_holistic.POSE_CONNECTIONS)
+            mp_drawing.draw_landmarks(image, result.pose_landmarks,mp_holistic.POSE_CONNECTIONS,
+                                      mp_drawing.DrawingSpec(color = (102,31,208),thickness = 2,circle_radius = 2),
+                                      mp_drawing.DrawingSpec(color = (103,249,237),thickness = 2,circle_radius = 2))
             
             cv.imshow('camera',image)
             if cv.waitKey(1) == ord('q'):
@@ -68,13 +68,25 @@ def te ():
                  break 
 
 def main():
-    te()
-    y_true = []
-    y_pred = [2.5, 0.0]
+    i=0  
+    run = True
+    y_true = [30,45,60,75,90,105,120,135,150]
+    y_pred = []
+    
+    while run:
+        image_process()
+        print(y_true[i]+"\n")
+        if keyboard.is_pressed('m'):
+            list.append(y_pred,angle)
+            i+=1
+            break
+        if i == len(y_true):
+            run= False
 
     mse = mean_squared_error(y_true, y_pred)
 
     print(mse)
+    print(y_pred)
 
     plt.plot(y_true,'r',)
     plt.plot(y_pred,'bo')

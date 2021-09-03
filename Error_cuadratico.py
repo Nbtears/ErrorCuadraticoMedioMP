@@ -47,7 +47,7 @@ def image_process (frame,mp_drawing,mp_holistic,holistic):
         pass
      #dibujar las articulaciones del cuerpo en la imagen
     mp_drawing.draw_landmarks(image, result.pose_landmarks,mp_holistic.POSE_CONNECTIONS,
-                              mp_drawing.DrawingSpec(color = (102,31,208),thickness = 2,circle_radius = 2),
+                              mp_drawing.DrawingSpec(color = (102,31,208),thickness = 2,circle_radius = 3),
                               mp_drawing.DrawingSpec(color = (103,249,237),thickness = 2,circle_radius = 2))
     return image,angle
     
@@ -61,7 +61,7 @@ def Mistake_calculation(y_true,y_pred):
 
     print(mse)
 
-    plt.title("Erro Cuadrático Medio")
+    plt.title("Error Cuadrático Medio")
     plt.plot(y_true,'r',label="Referencia")
     plt.plot(y_pred,'bo',label="Datos obtenidos")
     plt.ylabel('Angle')
@@ -89,7 +89,7 @@ def main():
             
             if cv.waitKey(1) == ord('q'):
                 break 
-            if keyboard.is_pressed('m'):
+            if keyboard.is_pressed(' '):
                 list.append(y_pred,angle)
                 i+=1
                 if i <= 9:

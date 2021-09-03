@@ -16,7 +16,7 @@ def angle_calculate(a,b,c):
     if angle > 180.0:
         angle=360-angle
     
-    return angle   
+    return int(angle)   
 
 def image_process (frame,mp_drawing,mp_holistic,holistic):  
     angle = 0
@@ -54,12 +54,17 @@ def image_process (frame,mp_drawing,mp_holistic,holistic):
     
 
 def Mistake_calculation(y_true,y_pred):
+    y_true.pop(0)
+    y_pred.pop(0)
     mse = mean_squared_error(y_true, y_pred)
+    print(y_pred)
 
     print(mse)
 
-    plt.plot(y_true,'r',)
-    plt.plot(y_pred,'bo')
+    plt.title("Erro Cuadrático Medio")
+    plt.plot(y_true,'r',label="Referencia")
+    plt.plot(y_pred,'bo',label="Datos obtenidos")
+    plt.ylabel('Angle')
     
     
 def main(): 
@@ -85,15 +90,16 @@ def main():
             if cv.waitKey(1) == ord('q'):
                 break 
             if keyboard.is_pressed('m'):
-                print(y_true[i])
                 list.append(y_pred,angle)
                 i+=1
-            if i > 9:
-                run= False
+                if i <= 9:
+                    print(y_true[i])
+                else:
+                    run= False
     
     cv.destroyAllWindows()
-    Mistake_calculation(y_true, y_pred)
     capture.release()  
+    Mistake_calculation(y_true, y_pred)
 
 if __name__=="__main__":
     main()          

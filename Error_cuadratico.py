@@ -2,8 +2,18 @@ import cv2 as cv
 import mediapipe as mp
 import numpy as np
 from sklearn.metrics import mean_squared_error
+from sklearn.linear_model import LinearRegression
 import matplotlib.pyplot as plt
 import keyboard
+
+def Regression_calculation(y_true,y_pred):
+    x=np.array(y_pred).reshape((-1,1))
+    y=np.array(y_true)
+    model=LinearRegression()
+    model.fit(x,y)
+    print("Coeficiente de x: ", model.coef_)
+    print("Intercepto: ", model.intercept_)
+    
 
 def angle_calculate(a,b,c):
     a=np.array(a)
@@ -40,7 +50,7 @@ def image_process (frame,mp_drawing,mp_holistic,holistic):
         angle = angle_calculate(shoulder_L,elbow_L,wrist_L)
         #look angle
         cv.putText(image,str(angle),
-                   tuple(np.multiply(elbow_L,[640,480]).astype(int)),
+                   tuple(np.multiply(elbow_L,[647,510]).astype(int)),
                          cv.FONT_HERSHEY_SIMPLEX,0.5,(255,255,255),2,cv.LINE_AA)
         
     except:
@@ -57,27 +67,32 @@ def Mistake_calculation(y_true,y_pred):
     mse = mean_squared_error(y_true, y_pred)
     print(y_pred)
 
-    print(mse)
+    print("Error Cuadrático Medio", mse)
 
     plt.title("Error Cuadrático Medio")
-    plt.plot(y_true,'r',label="Referencia")
-    plt.plot(y_pred,'bo',label="Datos obtenidos")
-    plt.ylabel('Angle')
+    plt.plot(y_true,y_true,'r',label="Referencia")
+    plt.plot(y_true, y_pred,'bo',label="Datos obtenidos")
+    plt.ylabel('Angulo obtenido')
+    plt.xlabel('Ángulo real') 
     
     
 def main(): 
-    y_true = [ 30, 45, 60, 75, 90,105,120,135,150]
+    
+    y_true = [30, 45, 60, 75, 90,105,120,135,150]
     y_pred = []
     i= 0 
+    ft=4
     run = True
     #setup mediapie
     mp_drawing = mp.solutions.drawing_utils
     mp_holistic = mp.solutions.holistic
     
+    
     #Abrir cámara web 
     capture = cv.VideoCapture(0) 
     with mp_holistic.Holistic(min_detection_confidence=0.8,min_tracking_confidence=0.8)as holistic:
         while run:
+            
             #Lerr datos de camara web
             data,frame = capture.read()
             frame=cv.flip(frame,1)
@@ -89,19 +104,22 @@ def main():
             
             if cv.waitKey(1) == ord('q'):
                 break 
-          
-            if keyboard.is_pressed(" "):
+            
+            if keyboard.is_pressed(" ") and ft>3:
+                ft=0
                 list.append(y_pred,angle)
                 i+=1
                 if i <= 8:
                     print("Registrado")
                 else:
                     run = False
+            
+            ft+=1
     
     cv.destroyAllWindows()
     capture.release()  
     Mistake_calculation(y_true, y_pred)
+    Regression_calculation(y_true, y_pred)
 
 if __name__=="__main__":
     main()          
-        

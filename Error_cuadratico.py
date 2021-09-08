@@ -54,8 +54,6 @@ def image_process (frame,mp_drawing,mp_holistic,holistic):
     
 
 def Mistake_calculation(y_true,y_pred):
-    y_true.pop(0)
-    y_pred.pop(0)
     mse = mean_squared_error(y_true, y_pred)
     print(y_pred)
 
@@ -68,34 +66,37 @@ def Mistake_calculation(y_true,y_pred):
     
     
 def main(): 
-    y_true = [0,30,45,60,75,90,105,120,135,150]
+    y_true = [ 30, 45, 60, 75, 90,105,120,135,150]
     y_pred = []
-    i= 0  
+    i= 0 
     run = True
     #setup mediapie
     mp_drawing = mp.solutions.drawing_utils
     mp_holistic = mp.solutions.holistic
     
     #Abrir cámara web 
-    capture = cv.VideoCapture(0)
-    print(y_true[i])    
+    capture = cv.VideoCapture(0) 
     with mp_holistic.Holistic(min_detection_confidence=0.8,min_tracking_confidence=0.8)as holistic:
         while run:
             #Lerr datos de camara web
             data,frame = capture.read()
             frame=cv.flip(frame,1)
             image,angle=image_process(frame,mp_drawing,mp_holistic,holistic)
+            cv.circle(image,(100,80),60,(12,7,86),-1)
+            cv.putText(image,str(y_true[i]),[55,95],cv.FONT_HERSHEY_SIMPLEX,1.5,(255,255,255),2,cv.LINE_AA)
             cv.imshow('camera',image)
+            
             
             if cv.waitKey(1) == ord('q'):
                 break 
-            if keyboard.is_pressed(' '):
+          
+            if keyboard.is_pressed(" "):
                 list.append(y_pred,angle)
                 i+=1
-                if i <= 9:
-                    print(y_true[i])
+                if i <= 8:
+                    print("Registrado")
                 else:
-                    run= False
+                    run = False
     
     cv.destroyAllWindows()
     capture.release()  

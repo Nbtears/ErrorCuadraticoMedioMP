@@ -64,7 +64,7 @@ def image_process (frame,mp_drawing,mp_holistic,holistic):
     
 
 def Mistake_calculation(y_true,y_pred):
-    mse = mean_squared_error(y_true, y_pred)
+    mse = mean_squared_error(y_true, y_pred,squared=False)
     print(y_pred)
 
     print("Error Cuadrático Medio", mse)
